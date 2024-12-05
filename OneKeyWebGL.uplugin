@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "OneKeyWebGL(Enterprise)",
+	"Description": "An enterprise-oriented, one-click packaging online HTML5 Unreal engine plug-in.",
+	"Category": "GINHE",
+	"CreatedBy": "GINHE",
+	"CreatedByURL": "https://www.ginhe.cn/uio",
+	"DocsURL": "https://txc.qq.com/products/673962/blog/1094868",
+	"MarketplaceURL": "https://www.ginhe.cn/uio",
+	"SupportURL": "https://txc.qq.com/products/673962/",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "OneKeyWebGL",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}
