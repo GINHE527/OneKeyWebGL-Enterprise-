@@ -2,7 +2,10 @@
 
 一个面向企业的一键打包上线 HTML5 的虚幻引擎插件。
 
-![OneKeyWebGL-Enterprise](https://cdn.ginhe.cn/1835029661/%E9%B2%B8%E8%B7%83%E9%93%B6%E6%B2%B3/%E8%99%9A%E5%B9%BB%E4%B8%8A%E7%BA%BF%E4%BA%86/%E5%AE%98%E7%BD%91%E7%B4%A0%E6%9D%90/OneKeyWebGL.png)
+
+## 插件Icon 
+![OneKeyWebGL-Enterprise](https://cdn.ginhe.cn/1835029661/10459882)
+
 
 ## 功能介绍
 - **全面版本支持**  
@@ -24,7 +27,7 @@
   完美适配 Vue、React、Angular 等前端框架，实现与 H5 客户端的高效通信。
 
 - **超大内存加载支持**  
-  支持加载超大资产（高达 20GB），为复杂场景提供可靠保障。
+  支持加载超大资产（高达 16GB），为复杂场景提供可靠保障。
 
 - **国产信创支持**  
   适配国产操作系统与硬件生态，满足信创环境要求。
