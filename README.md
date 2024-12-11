@@ -3,7 +3,7 @@
 一个面向企业的一键打包上线 HTML5 的虚幻引擎插件。
 
  
-![OneKeyWebGL-Enterprise](https://raw.githubusercontent.com/GINHE527/OneKeyWebGL-Enterprise-/main/images/OneKeyWebGL.png)
+<img src="https://raw.githubusercontent.com/GINHE527/OneKeyWebGL-Enterprise-/main/images/OneKeyWebGL.png" alt="OneKeyWebGL-Enterprise" style="width:64px; height:64px;">
 
 
 ## 功能介绍
