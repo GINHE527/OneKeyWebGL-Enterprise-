@@ -6,10 +6,16 @@
 #include "Misc/MessageDialog.h"
 #include "ToolMenus.h"
 #include <EditorWorldExtension.h>
-
+#include "ClientSocket.h"
 #include "FileZipperGinhe.h"
 #include <cstdlib>
 #include "LevelEditor.h"
+#include "OneKeyWebGLSettingsDetailsCustomization.h"
+#include "LevelEditor.h"
+#include "Widgets/Docking/SDockTab.h"
+
+
+#include "ToolMenus.h"
 #define FExtendMenuBase FOneKeyWebGLModule
 
 static const FName OneKeyWebGLTabName("OneKeyWebGL");
@@ -17,6 +23,7 @@ static bool isRuned = false;
 int copylist = 0;
 short COPYlist = 0;
 Zipper_ginhe* ZipPtr = new Zipper_ginhe();
+
 
 #define LOCTEXT_NAMESPACE "FOneKeyWebGLModule"
 
@@ -31,11 +38,10 @@ void FOneKeyWebGLModule::StartupModule()
 	FOneKeyWebGLCommands::Register();
 
 	ExtendMenuByFExtend();
-
 	PluginCommands = MakeShareable(new FUICommandList);
 
-
-
+	FPropertyEditorModule& PropertyEditorModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
+	PropertyEditorModule.RegisterCustomClassLayout(UOneKeyWebGLSettings::StaticClass()->GetFName(), FOnGetDetailCustomizationInstance::CreateStatic(&FOnekeyWebGLSettingsDetailsCustomization::MakeInstance));
 	//绑定事件
 	PluginCommands->MapAction(
 		FOneKeyWebGLCommands::Get().ToExtendMenu,
@@ -43,6 +49,9 @@ void FOneKeyWebGLModule::StartupModule()
 		FCanExecuteAction());
 
 	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FOneKeyWebGLModule::RegisterMenus));
+
+	//绑定委托
+	Declare_Bind();
 }
 
 
@@ -55,14 +64,15 @@ void FOneKeyWebGLModule::ShutdownModule()
 
 	UToolMenus::UnregisterOwner(this);
 
-	if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
-	{
-		SettingsModule->UnregisterSettings("Project", "Plugins", "UOneKeyWebGLSettings");
-	}
-
 	FOneKeyWebGLStyle::Shutdown();
 
 	FOneKeyWebGLCommands::Unregister();
+}
+
+void FOneKeyWebGLModule::Declare_Bind() {
+	UOneKeyWebGLSettings* Sett = GetMutableDefault<UOneKeyWebGLSettings>();
+
+	
 }
 
 void FExtendMenuBase::ExtendMenuByFExtend()
@@ -198,28 +208,43 @@ void FOneKeyWebGLModule::Deletetemp() {
 }
 void FExtendMenuBase::NewMainMenuEntryAction()
 {
-	UE_LOG(LogTemp, Warning, TEXT("NewMainMenuEntryAction is called."))
+	UE_LOG(LogTemp, Warning, TEXT("NewMainMenuEntryAction is called."));
 }
 
+
 void FOneKeyWebGLModule::Copy_Zip_Upload() {
-	//检测是否开启
-	if (!ZipPtr->ItCanBeRun)
-	{
-		DebugLog("ERORR CODE 000001 ,not list to send !");
+	//检测是否开启,服务器未开的话会卡
+	UOneKeyWebGLSettings* Sett = GetMutableDefault<UOneKeyWebGLSettings>();
+	if (Sett) {
+		FString username = Sett->Account_;
+		FString password = Sett->Password_;
+		Socket_Client* socket_runnable = Socket_Client::GetSocketIns(username, password);
+		FRunnableThread* Scoket_Thread = FRunnableThread::Create(socket_runnable,TEXT("Begin to login "), 0 , TPri_Normal);
+		if (Socket_Client::state == 1) {
+			DebugLog("Now is logged !");
+			if (!ZipPtr->ItCanBeRun)
+			{
+				DebugLog("ERORR CODE 000001 ,not list to send !");
+				return;
+			}
+			//用于复制上传逻辑
+			else if (copylist < 3) {
+				copylist++;
+				Zipper_ginhe_thread* ZipRunnable = new Zipper_ginhe_thread(ZipPtr);
+				FRunnableThread* Thread = FRunnableThread::Create(ZipRunnable, TEXT("Thread -> upload"), 0, TPri_Normal);
+			}
+		}
+	}
+	else {
 		return;
 	}
-	//用于复制上传逻辑
-	else if (copylist < 3) {
-		copylist++;
-		Zipper_ginhe_thread* ZipRunnable = new Zipper_ginhe_thread(ZipPtr);
-		FRunnableThread* Thread = FRunnableThread::Create(ZipRunnable, TEXT("Thread -> upload"), 0, TPri_Normal);
-	}
+	return;
 }
 
 void FOneKeyWebGLModule::PluginButtonClicked()
 {
 	// Put your "OnButtonClicked" stuff here
-	
+	Copy_Zip_Upload();
 }
 
 //该方法用于点击按钮后，ES 渲染的开启和关闭 //待完成
@@ -263,9 +288,9 @@ void FOneKeyWebGLModule::RegisterMenus()
 
 	if (ISettingsModule* SettingModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
 	{
-		SettingModule->RegisterSettings("Project", "Plugins", "MySetting",
-			LOCTEXT("RuntimeSettingsName", "My Setting Page"),
-			LOCTEXT("RuntimeSettingsDescription", "Configure my setting"),
+		SettingModule->RegisterSettings("Project", "OneKeyWebGL", "OneKeySetting",
+			LOCTEXT("OnekeyWebGL", "OneKeyWebGL-Enterprise"),
+			LOCTEXT("OnekeyWebGL-Enterprise", "Configure and adjust some configures"),
 			GetMutableDefault<UOneKeyWebGLSettings>()
 		);
 	}

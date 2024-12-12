@@ -30,6 +30,8 @@ public:
 	void Copy_Zip_Upload();
 	/*清理缓存*/
 	void Deletetemp();
+	/*委托绑定*/
+	void Declare_Bind();
 	TSharedPtr<FExtender>ToolBarExtender;
 	TSharedPtr<const FExtensionBase>Extension;
 
@@ -38,6 +40,8 @@ private:
 	void RegisterMenus();
 
 private:
+	TSharedRef<SDockTab> OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs);
+
 	TSharedPtr<class FUICommandList> PluginCommands;
 	/** FExtend拓展方式入口函数 */
 	void ExtendMenuByFExtend();
